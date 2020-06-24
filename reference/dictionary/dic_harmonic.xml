@@ -1,0 +1,172 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<dict>
+    <libVersion>0.6.0</libVersion>
+    <block>
+        <param name="blockOffset" value="0" />
+        <param name="f0Max" value="1000" />
+        <param name="f0Min" value="100" />
+        <param name="fftSize" value="1024" />
+        <param name="numPartials" value="1000" />
+        <param name="type" value="harmonic" />
+        <param name="windowLen" value="1024" />
+        <param name="windowShift" value="512" />
+        <param name="windowopt" value="0" />
+        <param name="windowtype" value="rectangle" />
+    </block>
+    <block>
+        <param name="blockOffset" value="0" />
+        <param name="f0Max" value="1000" />
+        <param name="f0Min" value="100" />
+        <param name="fftSize" value="1024" />
+        <param name="numPartials" value="1000" />
+        <param name="type" value="harmonic" />
+        <param name="windowLen" value="1024" />
+        <param name="windowShift" value="512" />
+        <param name="windowopt" value="0" />
+        <param name="windowtype" value="triangle" />
+    </block>
+    <block>
+        <param name="blockOffset" value="0" />
+        <param name="f0Max" value="1000" />
+        <param name="f0Min" value="100" />
+        <param name="fftSize" value="1024" />
+        <param name="numPartials" value="1000" />
+        <param name="type" value="harmonic" />
+        <param name="windowLen" value="1024" />
+        <param name="windowShift" value="512" />
+        <param name="windowopt" value="0" />
+        <param name="windowtype" value="cosine" />
+    </block>
+    <block>
+        <param name="blockOffset" value="0" />
+        <param name="f0Max" value="1000" />
+        <param name="f0Min" value="100" />
+        <param name="fftSize" value="1024" />
+        <param name="numPartials" value="1000" />
+        <param name="type" value="harmonic" />
+        <param name="windowLen" value="1024" />
+        <param name="windowShift" value="512" />
+        <param name="windowopt" value="0" />
+        <param name="windowtype" value="hanning" />
+    </block>
+    <block>
+        <param name="blockOffset" value="0" />
+        <param name="f0Max" value="1000" />
+        <param name="f0Min" value="100" />
+        <param name="fftSize" value="1024" />
+        <param name="numPartials" value="1000" />
+        <param name="type" value="harmonic" />
+        <param name="windowLen" value="1024" />
+        <param name="windowShift" value="512" />
+        <param name="windowopt" value="0" />
+        <param name="windowtype" value="hamming" />
+    </block>
+    <block>
+        <param name="blockOffset" value="0" />
+        <param name="f0Max" value="1000" />
+        <param name="f0Min" value="100" />
+        <param name="fftSize" value="1024" />
+        <param name="numPartials" value="1000" />
+        <param name="type" value="harmonic" />
+        <param name="windowLen" value="1024" />
+        <param name="windowShift" value="512" />
+        <param name="windowopt" value="0" />
+        <param name="windowtype" value="hamgen" />
+    </block>
+    <block>
+        <param name="blockOffset" value="0" />
+        <param name="f0Max" value="1000" />
+        <param name="f0Min" value="100" />
+        <param name="fftSize" value="1024" />
+        <param name="numPartials" value="1000" />
+        <param name="type" value="harmonic" />
+        <param name="windowLen" value="1024" />
+        <param name="windowShift" value="512" />
+        <param name="windowopt" value="0" />
+        <param name="windowtype" value="blackman" />
+    </block>
+    <block>
+        <param name="blockOffset" value="0" />
+        <param name="f0Max" value="1000" />
+        <param name="f0Min" value="100" />
+        <param name="fftSize" value="1024" />
+        <param name="numPartials" value="1000" />
+        <param name="type" value="harmonic" />
+        <param name="windowLen" value="1024" />
+        <param name="windowShift" value="512" />
+        <param name="windowopt" value="0" />
+        <param name="windowtype" value="flattop" />
+    </block>
+    <block>
+        <param name="blockOffset" value="0" />
+        <param name="f0Max" value="1000" />
+        <param name="f0Min" value="100" />
+        <param name="fftSize" value="1024" />
+        <param name="numPartials" value="1000" />
+        <param name="type" value="harmonic" />
+        <param name="windowLen" value="1024" />
+        <param name="windowShift" value="512" />
+        <param name="windowopt" value="0" />
+        <param name="windowtype" value="gauss" />
+    </block>
+    <block>
+        <param name="blockOffset" value="0" />
+        <param name="f0Max" value="1000" />
+        <param name="f0Min" value="100" />
+        <param name="fftSize" value="1024" />
+        <param name="numPartials" value="1000" />
+        <param name="type" value="harmonic" />
+        <param name="windowLen" value="1024" />
+        <param name="windowShift" value="512" />
+        <param name="windowopt" value="0" />
+        <param name="windowtype" value="exponential" />
+    </block>
+    <block>
+        <param name="blockOffset" value="0" />
+        <param name="f0Max" value="1000" />
+        <param name="f0Min" value="100" />
+        <param name="fftSize" value="1024" />
+        <param name="numPartials" value="1000" />
+        <param name="type" value="harmonic" />
+        <param name="windowLen" value="1024" />
+        <param name="windowShift" value="512" />
+        <param name="windowopt" value="0" />
+        <param name="windowtype" value="fof" />
+    </block>
+    <block>
+        <param name="blockOffset" value="0" />
+        <param name="f0Max" value="1000" />
+        <param name="f0Min" value="100" />
+        <param name="fftSize" value="1024" />
+        <param name="numPartials" value="1000" />
+        <param name="type" value="harmonic" />
+        <param name="windowLen" value="1024" />
+        <param name="windowShift" value="512" />
+        <param name="windowopt" value="0" />
+        <param name="windowtype" value="kbd" />
+    </block>
+    <block>
+        <param name="blockOffset" value="0" />
+        <param name="f0Max" value="1000" />
+        <param name="f0Min" value="100" />
+        <param name="fftSize" value="1024" />
+        <param name="numPartials" value="1000" />
+        <param name="type" value="harmonic" />
+        <param name="windowLen" value="1024" />
+        <param name="windowShift" value="512" />
+        <param name="windowopt" value="0" />
+        <param name="windowtype" value="pbcosine" />
+    </block>
+    <block>
+        <param name="blockOffset" value="0" />
+        <param name="f0Max" value="1000" />
+        <param name="f0Min" value="100" />
+        <param name="fftSize" value="1024" />
+        <param name="numPartials" value="1000" />
+        <param name="type" value="harmonic" />
+        <param name="windowLen" value="1024" />
+        <param name="windowShift" value="512" />
+        <param name="windowopt" value="0" />
+        <param name="windowtype" value="gamma" />
+    </block>
+</dict>

@@ -1,0 +1,50 @@
+%*******************************************************************************%
+%																				%
+%                            TestDictread.m										%
+%																				%
+%                      Matching Pursuit Testing Suite							%
+%																				%
+% Ronan Le Boulch											Thi Dec 02 2010		%
+% -----------------------------------------------------------------------------	%
+%																				%
+%	Copyright (C) 2005 IRISA													%
+%																				%
+%  This program is free software; you can redistribute it and/or				%
+%  modify it under the terms of the GNU General Public License					%
+%  as published by the Free Software Foundation; either version 2				%
+%  of the License, or (at your option) any later version.						%
+%																				%
+%  This program is distributed in the hope that it will be useful,				%
+%  but WITHOUT ANY WARRANTY; without even the implied warranty of				%
+%  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the				%
+%  GNU General Public License for more details.									%
+%																				%
+%  You should have received a copy of the GNU General Public License			%
+%  along with this program; if not, write to the Free Software					%
+%  Foundation, Inc., 59 Temple Place - Suite 330,								%
+%  Boston, MA  02111-1307, USA.													%
+%																				%
+%*******************************************************************************%
+disp('-----------------------------------------------------');
+disp('Testing the dictionaries using dictread and dictwrite');
+disp('-----------------------------------------------------');
+
+disp('... Verifying the presence of the dictionary example...');
+if exist('@MPTK_BINARY_DIR@/mptk/reference/dictionary/@MPTK_DEFAULT_GABORDICT_FILENAME@') == 0
+	disp('Error : The following dictionary example file does not exist : @MPTK_BINARY_DIR@/mptk/reference/dictionary/@MPTK_DEFAULT_GABORDICT_FILENAME@')
+	exit;
+end
+
+try
+	dicttest = dictread('@MPTK_BINARY_DIR@/mptk/reference/dictionary/@MPTK_DEFAULT_GABORDICT_FILENAME@')
+catch err
+	disp('Error during the "dictread" test')
+	exit;
+end
+
+try
+	dictwrite(dicttest,'@MPTK_TMP_PATH@/@MPTK_DEFAULT_GABORDICT_FILENAME@.bis')
+catch err
+	disp('Error during the "dictwrite" test')
+	exit;
+end

@@ -1,0 +1,3 @@
+ADD_SUBDIRECTORY( refman)
+ADD_SUBDIRECTORY( userman )
+

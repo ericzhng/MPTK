@@ -1,0 +1,68 @@
+Mat2MPTK
+-------
+
+This matlab toolkit make the MPTK commands available under Matlab. The main MPTK commands are available as functions, handling signals and Book structures, without manipulating .wav nor .bin files.
+
+Correspondance between MPTK command lines and Mat2MPTK:
+* -X<value> corresponds to the pair ...,'X', <value>,...
+* --option <value> corresponds to the pair ...,'option', <value>,...
+* '-' in option names must be replaced by '_'
+
+
+Special features:
+----------------
+* the file ~/.mptk/MPTKconfig.txt contains the default options for the MPTK commands. Example: if you write 'v = 1', all the MPTK commands will be called with the '-v' option (verbose), unless you specify the pair ,'v',0, in the function
+* to simplify function callings, the dictionary files are stored in a specific directory (by default, the 'Dict' subdirectory of the toolbox.
+* the 'GenerDict' function has been implemented to generate standard dictionary files, and the returns the name of the file. WARNING: GenerDict is currently not maintained and may not remain compatible with evolving versions of MPTK. Please prefer the dictcreate_gui.m graphical interface to create dictionaries when possible.
+
+Remarks:
+-------
+* mp*_wrap functions allow to call MPTK commands by using files instead of signals or Book structures. They are used by the mp* functions, but they are not very conveninent for standalone use. 
+
+Implemented commands:
+mpd, mpr, mpf, mpcat, mpd_demix
+
+Demo: (also in the Mat2MPTKdemo.m file)
+----
+load handel;
+[B, res, dec]=mpd(y, Fs, 'n', 1000);%will run mpd with the 'default.xml' dictionary file.
+figure;plot(10*log(dec)); title('Decay');xlabel('iterations');ylabel('Energy [dB]');
+[B1, B2] = mpf(B, 'i', '[1:500]');%split the book into two books, B1 contains the 500 first atoms, B2 the 500 following ones
+figure;bookplot(B1);
+figure;bookplot(B2);
+
+y1 = mpr(B1); %build signal from B1
+y2 = mpr(B2, res); % build signal from B2 and add the initial residual
+B3 = mpcat(B1, B2); % B3 must be equal to B!
+
+Note:
+----
+WARNING: MPTK must be installed !!
+And matlab search path variable as to be set with the mptk lib directory 
+
+On all plateform, the utilities need an environment variable called MPTK_CONFIG_FILENAME to be set with the path 
+of the path.xml file located in the bin directory.
+This file defines the path to the Atoms/Block plugin location. On Windows system in the case you have installed MPTK library and utilities in an non standard directory
+(eg different of "C:/Program Files/MPTK-0.5.4") you have to modify the path inside of this file with the real installation path.
+
+In order to set an environment variable on Linux like os:
+-with Bash shell:
+export MPTK_CONFIG_FILENAME="path_to_MPTK/bin/path.xml"
+-with C-shell:
+setenv MPTK_CONFIG_FILENAME "path_to_MPTK/bin/path.xml"
+You can check if the environment variable is correctly set with:
+echo $MPTK_CONFIG_FILENAME
+On Mac OSX an other solution is to edit ~/.MacOSX/environment.plist to add a key-value pair MPTK_CONFIG_FILENAME="/Users/your-username/.mptk/path.xml"
+In order to set environment variable on Windows like system:
+Lauch a command line and use the SET command:
+SET MPTK_CONFIG_FILENAME=path_to_MPTK/bin/path.xml 
+for example SET MPTK_CONFIG_FILENAME=C:/Program Files/MPTK-0.5.4/bin/path.xml 
+To check if the environment variable is correctly set you can use the ECHO command:
+ECHO %MPTK_CONFIG_FILENAME%
+
+Windows OS like system may complain with a missing dll: MSVCR71D.DLL
+You may install the files by using the Microsoft (TM) c runtime library SDK installer 
+Or download it with this adress for example: http://www.dll-files.com/dllindex/dll-files.shtml?msvcr71d
+
+
+
