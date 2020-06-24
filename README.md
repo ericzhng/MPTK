@@ -1,5 +1,5 @@
 ## NOTE
-Only option here is to use Win32 build.
+Only option here is to use x64 build. The reason is due to Matlab only support mex compiler 64 bit library.
 When compiling using Cmake, remember to deselect use shared library, otherwise can't build mptk4matlab
 
 ## Intro
