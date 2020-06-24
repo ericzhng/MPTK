@@ -48,10 +48,11 @@
 #include <list>
 #include "tinyxml.h"
 
-
+#include <fstream>
+#include <streambuf>
 
 /** \brief pre-declare MP_Dll_Manager_c class
- */ 
+ */
 class MP_Dll_Manager_c;
 
 /***********************/
@@ -61,125 +62,125 @@ class MP_Dll_Manager_c;
  * this class is used to set the mptk environnement before using matching pursuit
  */
 class MPTK_Env_c
-  {
+{
 
 
-    /********/
-    /* DATA */
-    /********/
+	/********/
+	/* DATA */
+	/********/
 public:
 
-  protected:
+protected:
 
-    /** \brief ptr on myEnv's
-     * Can only be accessed by getEnv()
-     */
-    static MPTK_Env_c * myEnv;
-    
-     /** \brief ptr on MP_Dll_Manager_c
-     */
-     static MP_Dll_Manager_c* dll;
-  private:
-    /** \brief Boolean set to true when an instance is created */
-    static bool instanceFlag;
+	/** \brief ptr on myEnv's
+	 * Can only be accessed by getEnv()
+	 */
+	static MPTK_Env_c * myEnv;
 
-    /** \brief Boolean set to true when when the fftw wisdom file is correctly
-     * loaded and the wisdom is well formed
-     */
-    static bool fftw_file_loaded;
-    
-    /** \brief Boolean set to true when when the fftw wisdom file is correctly
-    * loaded and the wisdom is well formed
-    */
-    static bool environment_loaded;
+	/** \brief ptr on MP_Dll_Manager_c
+	*/
+	static MP_Dll_Manager_c* dll;
+private:
+	/** \brief Boolean set to true when an instance is created */
+	static bool instanceFlag;
 
-   /** \brief Hash map to store the atom name and the file creation atom method pointer */
-	map<const char*,const char*,mp_ltstring> configPath;
+	/** \brief Boolean set to true when when the fftw wisdom file is correctly
+	 * loaded and the wisdom is well formed
+	 */
+	static bool fftw_file_loaded;
 
-    /***********/
-    /* METHODS */
-    /***********/
+	/** \brief Boolean set to true when when the fftw wisdom file is correctly
+	* loaded and the wisdom is well formed
+	*/
+	static bool environment_loaded;
 
-    /***************************/
-    /* CONSTRUCTORS/DESTRUCTOR */
-    /***************************/
+	/** \brief Hash map to store the atom name and the file creation atom method pointer */
+	map<const char*, const char*, mp_ltstring> configPath;
 
-  public:
+	/***********/
+	/* METHODS */
+	/***********/
 
-  virtual ~MPTK_Env_c();
-    /** \brief Public struct to compare the value in path hash map */
+	/***************************/
+	/* CONSTRUCTORS/DESTRUCTOR */
+	/***************************/
 
-  private:
+public:
 
-    /** \brief Private constructor*/
-    MPTK_Env_c();
+	virtual ~MPTK_Env_c();
+	/** \brief Public struct to compare the value in path hash map */
 
-    /***************************/
-    /* OTHER METHODS           */
-    /***************************/
+private:
 
-  public:
-    /** \brief Allocating and initializing
-     *  myEnv's static data member
-     *  (the ptr, not a myEnv inst)
-     */
-    MPTK_LIB_EXPORT static MPTK_Env_c * get_env();
+	/** \brief Private constructor*/
+	MPTK_Env_c();
 
-    /** \brief Get boolean defining if Wisdom file was correctly loaded
-     */
-    MPTK_LIB_EXPORT bool get_fftw_wisdom_loaded();
+	/***************************/
+	/* OTHER METHODS           */
+	/***************************/
 
-    /** \brief Set boolean defining if Wisdom file was correctly loaded
-     */
-    MPTK_LIB_EXPORT bool set_fftw_wisdom_loaded();
+public:
+	/** \brief Allocating and initializing
+	 *  myEnv's static data member
+	 *  (the ptr, not a myEnv inst)
+	 */
+	MPTK_LIB_EXPORT static MPTK_Env_c * get_env();
 
-    /** \brief Method to change MPTK environnement if necessary
-     *  \param filename the name of environment file to change
-     */
-   MPTK_LIB_EXPORT bool set_env(string filename);
+	/** \brief Get boolean defining if Wisdom file was correctly loaded
+	 */
+	MPTK_LIB_EXPORT bool get_fftw_wisdom_loaded();
 
-    /** \brief Method to load MPTK environnement
-     * \param name the name of xml file containing the environment informations, use an empty string or NULL to rely on default name given by get_configuration_file()
-	 * \return true if the environment was not already loaded and the loading was successful, false otherwise 
-    */
-    MPTK_LIB_EXPORT bool load_environment(const char * name);
+	/** \brief Set boolean defining if Wisdom file was correctly loaded
+	 */
+	MPTK_LIB_EXPORT bool set_fftw_wisdom_loaded();
 
-    /** \brief Method to load MPTK environnement if not already loaded
-     * \param name the name of xml file containing the environment informations,
-     *        use an empty string or NULL to rely on default name given by  get_configuration_file()
-     * \return true if the environment was already loaded 
-     *              or if it was not but the loading was successful, 
-     *         false otherwise (and appropriate error messages are given) 
-    */
-    MPTK_LIB_EXPORT bool load_environment_if_needed(const char * name);
+	/** \brief Method to change MPTK environnement if necessary
+	 *  \param filename the name of environment file to change
+	 */
+	MPTK_LIB_EXPORT bool set_env(string filename);
+
+	/** \brief Method to load MPTK environnement
+	 * \param name the name of xml file containing the environment informations, use an empty string or NULL to rely on default name given by get_configuration_file()
+	 * \return true if the environment was not already loaded and the loading was successful, false otherwise
+	 */
+	MPTK_LIB_EXPORT bool load_environment(const char * name);
+
+	/** \brief Method to load MPTK environnement if not already loaded
+	 * \param name the name of xml file containing the environment informations,
+	 *        use an empty string or NULL to rely on default name given by  get_configuration_file()
+	 * \return true if the environment was already loaded
+	 *              or if it was not but the loading was successful,
+	 *         false otherwise (and appropriate error messages are given)
+	 */
+	MPTK_LIB_EXPORT bool load_environment_if_needed(const char * name);
 
 
-    /** \brief Method to get the name of the configuration file via environnement variable 
-    */
-    MPTK_LIB_EXPORT char * get_configuration_file();
-    
-    /** \brief Method to get a boolean that say if environment is loaded
-     */ 
-    MPTK_LIB_EXPORT bool get_environment_loaded();
+	/** \brief Method to get the name of the configuration file via environnement variable
+	*/
+	MPTK_LIB_EXPORT char * get_configuration_file();
 
-    /** \brief Method to get the name of a configuration path 
-    *  \param name of the path
-    *  \return the path if successful, NULL otherwise
-    */
-    MPTK_LIB_EXPORT const char * get_config_path(const char * name);
+	/** \brief Method to get a boolean that say if environment is loaded
+	 */
+	MPTK_LIB_EXPORT bool get_environment_loaded();
+
+	/** \brief Method to get the name of a configuration path
+	*  \param name of the path
+	*  \return the path if successful, NULL otherwise
+	*/
+	MPTK_LIB_EXPORT const char * get_config_path(const char * name);
 
 	/** \brief Method to get the list of path names registered in configuration path
-    *   \param nameVector : pointer on the vector which has to be fill with the name of paths
+	*   \param nameVector : pointer on the vector which has to be fill with the name of paths
 	*/
-	MPTK_LIB_EXPORT void get_registered_path_name( vector< string >* nameVector );
-	MPTK_LIB_EXPORT void get_registered_path_names( char **pathNames );
-	MPTK_LIB_EXPORT int get_path_size( void );
+	MPTK_LIB_EXPORT void get_registered_path_name(vector< string >* nameVector);
+	MPTK_LIB_EXPORT void get_registered_path_names(char **pathNames);
+	MPTK_LIB_EXPORT int get_path_size(void);
 
-    /** \brief Method to release environnement, desallocate all variables.
-    */
-    MPTK_LIB_EXPORT static void release_environment();
-    
-  };
+	/** \brief Method to release environnement, desallocate all variables.
+	*/
+	MPTK_LIB_EXPORT static void release_environment();
+
+};
 
 /***********************/
 /* MPTK_Server CLASS   */
@@ -190,82 +191,81 @@ public:
  */
 
 class MPTK_Server_c
-  {
+{
 
-    /********/
-    /* DATA */
-    /********/
-  protected:
+	/********/
+	/* DATA */
+	/********/
+protected:
 
-    /** \brief ptr on myServer's
-     * Can only be accessed by get_server()
-     */
-    static MP_Msg_Server_c * myMsgServer;
-     
-    static MPTK_Server_c * myServer;
-    /** \brief ptr on myWinServer's
-    * Can only be accessed by get_win_server()
-    */
-    static MP_Win_Server_c * myWinServer;
+	/** \brief ptr on myServer's
+	 * Can only be accessed by get_server()
+	 */
+	static MP_Msg_Server_c * myMsgServer;
 
-    /** \brief ptr on myAnywaveServer's
-    * Can only be accessed by get_anywave_server()
-    */
-    static MP_Anywave_Server_c* myAnywaveServer;
+	static MPTK_Server_c * myServer;
+	/** \brief ptr on myWinServer's
+	* Can only be accessed by get_win_server()
+	*/
+	static MP_Win_Server_c * myWinServer;
 
-    /***********/
-    /* METHODS */
-    /***********/
+	/** \brief ptr on myAnywaveServer's
+	* Can only be accessed by get_anywave_server()
+	*/
+	static MP_Anywave_Server_c* myAnywaveServer;
 
-    /***************************/
-    /* CONSTRUCTORS/DESTRUCTOR */
-    /***************************/
+	/***********/
+	/* METHODS */
+	/***********/
 
-  public:
+	/***************************/
+	/* CONSTRUCTORS/DESTRUCTOR */
+	/***************************/
 
-  virtual ~MPTK_Server_c();
-    /** \brief Public struct to compare the value in path hash map */
+public:
 
-  private:
+	virtual ~MPTK_Server_c();
+	/** \brief Public struct to compare the value in path hash map */
 
-    /** \brief Private constructor*/
-    MPTK_Server_c();
+private:
 
-    /***************************/
-    /* OTHER METHODS           */
-    /***************************/
-     
-  public:
+	/** \brief Private constructor*/
+	MPTK_Server_c();
 
-    /** \brief Allocating and initializing
-    *  myServer's static data member
-    *  (the ptr, not a myServer inst)
-    */
-    static MPTK_Server_c* get_server();
-    
-    /** \brief Allocating and initializing
-    *  myMsgServer's static data member
-    *  (the ptr, not a myMsgServer inst)
-    */
-    MPTK_LIB_EXPORT static MP_Msg_Server_c* get_msg_server();
-    
-    /** \brief Allocating and initializing
-    *  myWinServer's static data member
-    *  (the ptr, not a myWinServer inst)
-    */
-    MPTK_LIB_EXPORT static MP_Win_Server_c* get_win_server();
-    
-    /** \brief Allocating and initializing
-    *  myAnywaveServer's static data member
-    *  (the ptr, not a myAnywaveServer inst)
-    */
-    MPTK_LIB_EXPORT static MP_Anywave_Server_c* get_anywave_server();
+	/***************************/
+	/* OTHER METHODS           */
+	/***************************/
 
-    /** \brief Release all the server
-    * Note that the chronology of server destruction is critical for Debug Mode
-    */
-    void release_servers();
-  }
-;
+public:
+
+	/** \brief Allocating and initializing
+	*  myServer's static data member
+	*  (the ptr, not a myServer inst)
+	*/
+	static MPTK_Server_c* get_server();
+
+	/** \brief Allocating and initializing
+	*  myMsgServer's static data member
+	*  (the ptr, not a myMsgServer inst)
+	*/
+	MPTK_LIB_EXPORT static MP_Msg_Server_c* get_msg_server();
+
+	/** \brief Allocating and initializing
+	*  myWinServer's static data member
+	*  (the ptr, not a myWinServer inst)
+	*/
+	MPTK_LIB_EXPORT static MP_Win_Server_c* get_win_server();
+
+	/** \brief Allocating and initializing
+	*  myAnywaveServer's static data member
+	*  (the ptr, not a myAnywaveServer inst)
+	*/
+	MPTK_LIB_EXPORT static MP_Anywave_Server_c* get_anywave_server();
+
+	/** \brief Release all the server
+	* Note that the chronology of server destruction is critical for Debug Mode
+	*/
+	void release_servers();
+};
 
 #endif /*MPTK_ENV_C_H_*/

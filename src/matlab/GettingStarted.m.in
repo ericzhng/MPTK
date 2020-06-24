@@ -191,7 +191,7 @@ while (quitTutorial == 0)
 			disp('         sigrec = mprecons(book)');
 			disp('         figure(3);bookover(book,sigrec)');
 			disp('(press enter to continue)');pause;
-			sigrec = mprecons(book);
+			sigrec = mprecons(book, dict);
 			figure(3);bookover(book,sigrec);
 			disp('Let us now compare the original signal with the reconstructed one:')
 			disp('(press enter to continue)');pause;
@@ -234,7 +234,7 @@ while (quitTutorial == 0)
 		    [sig sampleRate] = sigread(mptkInfo.path.exampleSignal);
 		    dict = dictread(mptkInfo.path.defaultAnyWaveDict);
 		    [book residual decay] = mpdecomp(sig,sampleRate,dict,1000);
-			sigrec = mprecons(book);
+			sigrec = mprecons(book, dict);
 			sigwrite(sigrec,'/Users/rleboulc/bar/mptk/reference/signal/RECONST.wav',sampleRate)
 		case '6'
 			%------------------

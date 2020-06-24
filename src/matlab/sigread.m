@@ -3,9 +3,9 @@
 %   [signal,sampleRate] = sigread(filename)
 %
 % Synopsis:
-%   Reads an imports signal “filename” of any format supported by libsndfile library 
-%   to Matlab and gives a matrix “signal” (numSamples x numChans) and the sampling 
-%   frequency of the read signal “sampleRate”.
+%   Reads an imported signal from filename of any format supported by libsndfile library 
+%   to Matlab and gives a matrix [signal] (numSamples x numChans) and the sampling 
+%   frequency of the read signal [sampleRate].
 %
 % Input :
 %   filename   : The filename where to read the signal

@@ -410,7 +410,7 @@ class MP_Dict_c
      * Side-effect : blockWithMaxIP is updated.
      * \return The value of the maximum inner product
      */
-    MPTK_LIB_EXPORT MP_Real_t update (GP_Block_Book_c*);
+    MPTK_LIB_EXPORT MP_Real_t update (GP_Book_c*);
 
     /** \brief Compute all the inner products and finds the max
      *

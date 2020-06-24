@@ -8,7 +8,7 @@ PROJECT(MPTK)
 CMAKE_MINIMUM_REQUIRED(VERSION 2.4)
 
 if(COMMAND cmake_policy)
-      cmake_policy(SET CMP0002 OLD)
+    cmake_policy(SET CMP0002 OLD)
 endif(COMMAND cmake_policy)
 
 MESSAGE( STATUS "CMAKE_BUILD_TYPE:	" ${CMAKE_BUILD_TYPE})
@@ -17,7 +17,7 @@ MESSAGE( STATUS "CMAKE_BUILD_TYPE:	" ${CMAKE_BUILD_TYPE})
 #Define CMAKE_INSTALL_PREFIX
 ##############################################################################
 
-SET(CMAKE_INSTALL_PREFIX "D:\MPTK_execs")
+SET(CMAKE_INSTALL_PREFIX "D:/1ResearchCodes/10Workspace/matching-pursuit-toolkit-exec")
 MESSAGE( STATUS "CMAKE_INSTALL_PREFIX:	" ${CMAKE_INSTALL_PREFIX} )
 
 ##############################################################################
@@ -360,6 +360,11 @@ IF(LIBRARY_OUTPUT_PATH)
 ELSE(LIBRARY_OUTPUT_PATH)
 	SET(LIBRARY_OUTPUT_PATH "${MPTK_BINARY_DIR}/lib/" CACHE PATH "Single output directory for building all libraries.")
 ENDIF(LIBRARY_OUTPUT_PATH)
+
+# Turn on the ability to create folders to organize projects (.vcproj)
+# It creates "CMakePredefinedTargets" folder by default and adds CMake
+# defined projects like INSTALL.vcproj and ZERO_CHECK.vcproj
+set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 
 
 ##############################################################################

@@ -765,7 +765,7 @@ unsigned long int MP_Block_c::build_subbook_waveform_amp(GP_Book_c* thisBook, MP
 
 	size = thisPosition-thisFirstPosition+filterLen;
 
-	// Mise ï¿½ 0 du buffer
+	// Mise ï¿?0 du buffer
 	memset(outBuffer, 0, size*s->numChans);
 
 	// Parcours du book pour rï¿½cupï¿½rer les frames
@@ -806,7 +806,7 @@ unsigned long int MP_Block_c::build_subbook_waveform_corr(GP_Book_c* thisBook, M
 
 	size = thisPosition-thisFirstPosition+filterLen;
 
-	// Mise ˆ 0 du buffer
+	// Mise ?0 du buffer
 	memset(outBuffer, 0, size*s->numChans*sizeof(MP_Real_t));
 
 	// Parcours du book pour rŽcupŽrer les frames
@@ -833,7 +833,7 @@ unsigned long int MP_Block_c::build_frame_waveform_amp(GP_Param_Book_c* thisFram
 {
 	GP_Param_Book_Iterator_c iter;
 
-	// Mise ˆ 0 du buffer
+	// Mise ?0 du buffer
 	memset(outBuffer, 0, filterLen*s->numChans*sizeof(MP_Real_t));
 
 	// Parcours de la frame pour reconstruction
@@ -852,7 +852,7 @@ unsigned long int MP_Block_c::build_frame_waveform_corr(GP_Param_Book_c* thisFra
 
 	GP_Param_Book_Iterator_c iter;
 
-	// Mise ˆ 0 du buffer
+	// Mise ?0 du buffer
 	memset(outBuffer, 0, filterLen*s->numChans*sizeof(MP_Real_t));
 
 	// Parcours de la frame pour reconstruction

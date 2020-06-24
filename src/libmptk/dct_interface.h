@@ -4,7 +4,7 @@
 /*                                                                            */
 /*                        Matching Pursuit Library                            */
 /*                                                                            */
-/* Boris Mailhé                                               Mon 25 Oct 2010 */
+/* Boris Mailh?                                              Mon 25 Oct 2010 */
 /* -------------------------------------------------------------------------- */
 /*                                                                            */
 /*  Copyright (C) 2005 IRISA                                                  */

@@ -75,16 +75,17 @@ void mexFunction(int nlhs, mxArray *plhs[],int nrhs, const mxArray *prhs[]) {
     vector< string >* pathNameVector  = new vector< string >();
     mxArray *tmp = NULL;
 
-	// Initialisation of MPTK for Matlab
-    InitMPTK4Matlab(mexFunctionName());
     // Check input arguments
-    if (nrhs > 0) {
+    if (nrhs > 2) {
         mexPrintf("%s error -- bad number of input arguments\n",mexFunctionName());
         mexPrintf("    see help %s\n",mexFunctionName());
         mexErrMsgTxt("Aborting");
 		return;
     }
     
+	// Initialisation of MPTK for Matlab
+    InitMPTK4Matlab(mexFunctionName());
+
 	// Retrievement of the atoms, blocks and path informations
 	int iAtomSize = MP_Atom_Factory_c::get_atom_size();
 	int iBlockSize = MP_Block_Factory_c::get_block_size();
@@ -162,7 +163,7 @@ void mexFunction(int nlhs, mxArray *plhs[],int nrhs, const mxArray *prhs[]) {
 
     // Prepare for storing the block parameters information
     int numBlockInfoFieldNames = 4;
-	int	iIndex = 0;
+
 	const char *blockInfoFieldNames[]  = {"name","type","info","default"};
     mxArray *paramName     = NULL;
     mxArray *paramInfo     = NULL;
@@ -187,11 +188,11 @@ void mexFunction(int nlhs, mxArray *plhs[],int nrhs, const mxArray *prhs[]) {
 		MP_Block_Factory_c::get_block_default_maps(blockNameVector->at(i).c_str(), szDefaultMapFirst, szDefaultMapSecond);
 		MP_Block_Factory_c::get_block_info_maps(blockNameVector->at(i).c_str(), szInfoMapFirst, szInfoMapSecond);
 		MP_Block_Factory_c::get_block_type_maps(blockNameVector->at(i).c_str(), szTypeMapFirst, szTypeMapSecond);
-		for (iIndex = 0; iIndex < iBlockInfoSize; iIndex++)
+		for (int iIndex = 0; iIndex < iBlockInfoSize; iIndex++)
 			(*infoMap)[szInfoMapFirst[iIndex]] = szInfoMapSecond[iIndex];
-		for (iIndex = 0; iIndex < iBlockDefaultSize; iIndex++)
+		for (int iIndex = 0; iIndex < iBlockDefaultSize; iIndex++)
 			(*defaultMap)[szDefaultMapFirst[iIndex]] = szDefaultMapSecond[iIndex];
-		for (iIndex = 0; iIndex < iBlockTypeSize; iIndex++)
+		for (int iIndex = 0; iIndex < iBlockTypeSize; iIndex++)
 			(*typeMap)[szTypeMapFirst[iIndex]] = szTypeMapSecond[iIndex];
 		// Gets the name of the block  
 		tmp = mxCreateString(blockNameVector->at(i).c_str());
@@ -215,11 +216,12 @@ void mexFunction(int nlhs, mxArray *plhs[],int nrhs, const mxArray *prhs[]) {
 		if (defaultMap) delete(defaultMap);
 		if (typeMap) delete(typeMap);
 		if (infoMap) delete(infoMap);	
-		for (iIndex = 0; iIndex < iBlockInfoSize; iIndex++)
+		
+		for (int iIndex = 0; iIndex < iBlockInfoSize; iIndex++)
 			{free(szInfoMapFirst[iIndex]);free(szInfoMapSecond[iIndex]);}
-		for (iIndex = 0; iIndex < iBlockDefaultSize; iIndex++)
+		for (int iIndex = 0; iIndex < iBlockDefaultSize; iIndex++)
 			{free(szDefaultMapFirst[iIndex]);free(szDefaultMapSecond[iIndex]);}
-		for (iIndex = 0; iIndex < iBlockTypeSize; iIndex++)
+		for (int iIndex = 0; iIndex < iBlockTypeSize; iIndex++)
 			{free(szTypeMapFirst[iIndex]);free(szTypeMapSecond[iIndex]);}
 
 		free(szInfoMapFirst);
@@ -228,7 +230,7 @@ void mexFunction(int nlhs, mxArray *plhs[],int nrhs, const mxArray *prhs[]) {
 		free(szDefaultMapSecond);
 		free(szTypeMapFirst);
 		free(szTypeMapSecond);
-
+		
 		// Store parameter information for the current block
 		mxSetField(mexBlockInfo,(mwIndex)i,"parameters",mexParameters);	
 	}

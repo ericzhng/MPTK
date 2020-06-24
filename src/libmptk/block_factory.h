@@ -67,7 +67,7 @@ class MP_Block_Factory_c
     static bool instanceFlag;
 
 
-	    /** \brief Hash map to store the block name and method to create it*/
+	/** \brief Hash map to store the block name and method to create it*/
 	map<const char*, MP_Block_c*(*)(MP_Signal_c *s, map<string, string, mp_ltstring> *paramMap),mp_ltstring> block;
     /** \brief Hash map to store the block parameter type map */
 	map<const char*, void (*)(map< string, string, mp_ltstring> * parameterMapType),mp_ltstring> blockType;

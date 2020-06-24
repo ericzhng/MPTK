@@ -220,7 +220,8 @@ void mp_msg_handler_flush( void ) {
 	return; /* If the message type does not fit the mask,
 		   stop here and do nothing. */
       debugDisplay = MP_Msg_Server_c::get_msg_server()->get_display_function("debug_message_display");
-      if (debugDisplay)debugDisplay(MPTK_Server_c::get_msg_server()->stdBuff);
+      if (debugDisplay)
+		  debugDisplay(MPTK_Server_c::get_msg_server()->stdBuff);
       else {fprintf( stderr, MP_LIB_STR_PREFIX  " ERROR -- mp_msg_handler_flush() -"
 		     " debug display is not define.\n");
 	fflush( stderr );}

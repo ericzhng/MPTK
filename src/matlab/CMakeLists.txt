@@ -87,8 +87,7 @@ ENDFOREACH(matscriptfile)
 
 IF(BUILD_MATLAB_MEX_FILES_EXPERIMENTAL)
 # List of experimental script files to be copied and installed
-# FOREACH(scriptfile createrandomdictionary.m create_synthetic_data.m test_anywave.m test_mpd_demix.m savetable.m tableread.m)
-FOREACH(scriptfile createrandomdictionary.m create_synthetic_data.m test_anywave.m test_mpd_demix.m)
+FOREACH(scriptfile createrandomdictionary.m create_synthetic_data.m savetable.m tableread.m test_anywave.m test_mpd_demix.m)
    # Copy the script
    CONFIGURE_FILE(${MPTK_MATLAB_SRC_DIR}/scripts/experimental/${scriptfile} ${MPTK_MATLAB_OUTPUT_DIR}/${scriptfile} COPYONLY)
    # Set rule to install it
@@ -244,7 +243,7 @@ ELSE(BUILD_MATLAB_MEX_FILES AND MATLAB_MEX_COMPILER)
 	MESSAGE("Warning: Matlab scripts implementing 'poor man' versions of MEX-files will be installed, unless you set BUILD_MATLAB_MEX_FILES to ON.")
  
 	# List of script files to be copied and installed as cheap replacements to MEX-files
-	FOREACH(scriptfile  dictread.m dictwrite.m bookread.m bookwrite.m)
+	FOREACH(scriptfile dictread.m dictwrite.m bookread.m bookwrite.m)
 		# Copy the script
 		CONFIGURE_FILE(${MPTK_MATLAB_SRC_DIR}/scripts/obsolete/${scriptfile} ${MPTK_MATLAB_OUTPUT_DIR}/${scriptfile} COPYONLY)
 		# Set rule to install it

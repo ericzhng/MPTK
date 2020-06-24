@@ -144,7 +144,7 @@ int main(int argc, char **argv)
       }
     }
 
-  myDict->print(dictName);
+  // myDict->print(dictName);
   delete(nameVector);
   // Erase dictionnary
   myDict->delete_all_blocks();

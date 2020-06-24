@@ -38,6 +38,7 @@
 #include <mptk.h>
 
 int main( int argc, char ** argv ) {
+
 	const char		*func = "test_mp";
 	std::string		strAppDirectory;
 	MP_Signal_c		*sigref = NULL;
@@ -107,9 +108,11 @@ int main( int argc, char ** argv ) {
   
 	// Build a new dictionary
 	strAppDirectory = string(refdir);
-	strAppDirectory += "/dictionary/dic_test.xml";
-  
-	dico = MP_Dict_c::read_from_xml_file( strAppDirectory.c_str());
+	strAppDirectory += "/dictionary/dic_gabor_two_scales.xml";
+
+	dico = MP_Dict_c::read_from_xml_file(strAppDirectory.c_str());
+
+	//dico = MP_Dict_c::read_from_xml_file( strAppDirectory.c_str());
 	if ( dico == NULL )
 	{
 		mp_error_msg( func, "Failed to create a dictionary from XML file [%s].\n", strAppDirectory.c_str() );
