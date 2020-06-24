@@ -4,11 +4,32 @@
 #  - CMake/* files, which define some tools to search for libraries, etc.
 
 PROJECT(MPTK)
+
 CMAKE_MINIMUM_REQUIRED(VERSION 2.4)
+
 if(COMMAND cmake_policy)
       cmake_policy(SET CMP0002 OLD)
 endif(COMMAND cmake_policy)
 
+MESSAGE( STATUS "CMAKE_BUILD_TYPE:	" ${CMAKE_BUILD_TYPE})
+
+##############################################################################
+#Define CMAKE_INSTALL_PREFIX
+##############################################################################
+
+SET(CMAKE_INSTALL_PREFIX "D:\MPTK_execs")
+MESSAGE( STATUS "CMAKE_INSTALL_PREFIX:	" ${CMAKE_INSTALL_PREFIX} )
+
+##############################################################################
+#Define temporary directory
+##############################################################################
+IF(UNIX)
+	SET(MPTK_TMP_PATH ${CMAKE_INSTALL_PREFIX})
+ELSE(UNIX)
+	IF(WIN32)
+		SET(MPTK_TMP_PATH ${CMAKE_INSTALL_PREFIX})
+	ENDIF(WIN32)
+ENDIF(UNIX)
 
 ##############################################################################
 # Setting compilation option
@@ -18,30 +39,37 @@ OPTION(BUILD_EXECUTABLE "Build executable." ON)
 # Allows building of shared libraries:
 OPTION(BUILD_SHARED_LIBS "Build shared libraries." ON)
 # Enable testing:
-OPTION(BUILD_TESTING "Build Tests" ON) 
+OPTION(BUILD_TESTING "Build Tests" ON)
 #Allows generating the doc:
 OPTION(BUILD_DOCUMENTATION "Generating the doxygen documentation." OFF)
 # Allows multithreading:
 OPTION(BUILD_MULTITHREAD "Enable multithread." OFF)
 # Allows verbose:
 OPTION(BUILD_VERBOSE "Enable verbose option when compile (-v)." ON)
+
 # Allows MPTK Debug:
-OPTION(BUILD_DEBUG "Enable MPTK Debug mode." OFF)
+if (CMAKE_BUILD_TYPE STREQUAL "RELEASE")
+	OPTION(BUILD_DEBUG "Enable MPTK Debug mode." OFF)
+else()
+	OPTION(BUILD_DEBUG "Enable MPTK Debug mode." ON)
+endif()
+MESSAGE( STATUS "BUILD_DEBUG:	" ${BUILD_DEBUG} )
+
 # Allows Matlab MEX files :
 OPTION(BUILD_MATLAB_MEX_FILES "Enable building Matlab MEX files." ON)
 # Allows build python extension :
-OPTION(BUILD_PYTHON_FILES "Enable building python files." ON)
+OPTION(BUILD_PYTHON_FILES "Enable building python files." OFF)
 # Allows build experimental feature :
 OPTION(BUILD_EXPERIMENTAL "Enable building experimental files." OFF)
 # Allows build experimental feature :
 OPTION(BUILD_MATLAB_MEX_FILES_EXPERIMENTAL "Enable building Matlab experimental MEX files." OFF)
-# Allows build RPM experimental feature :
 IF(UNIX)
-OPTION(INSTALL_MAT2MPTK "Install Mat2MPTK toolkit" OFF)
-# Compilation of modules:
-OPTION(BUILD_GUI "Build experimental Qt Graphical user interface" OFF) 
-#Allows generating the doc for GUI:
-OPTION(BUILD_DOCUMENTATION_GUI "Generating the doxygen documentation for GUI." OFF)
+	# Allows build RPM experimental feature :
+	OPTION(INSTALL_MAT2MPTK "Install Mat2MPTK toolkit" OFF)
+	# Compilation of modules:
+	OPTION(BUILD_GUI "Build experimental Qt Graphical user interface" OFF) 
+	#Allows generating the doc for GUI:
+	OPTION(BUILD_DOCUMENTATION_GUI "Generating the doxygen documentation for GUI." OFF)
 ENDIF(UNIX)
 #You can reference the special $ENV{} variable to get environment values
 #like any other CMake variable.
@@ -133,6 +161,8 @@ ENDIF(BUILD_TESTING AND DASH_TESTING)
 # Setting compilation options :
 ##############################################################################
 #Select the ADD_DEFINITIONS according to selected options
+MESSAGE( STATUS "BUILD_VERBOSE:	" ${BUILD_VERBOSE} )
+
 IF(WIN32)
   # With Visual Studio 2005, Microsoft deprecates the standard C library, for
 	# example fopen() and sprintf(), to non-portable functions fopen_s() and
@@ -141,6 +171,7 @@ IF(WIN32)
 	# warnings. To suppress it, we add the _CRT_SECURE_NO_DEPRECATE preprocessor
 	# definition -fprofile-arcs -ftest-coverage
   ADD_DEFINITIONS(-D_CRT_SECURE_NO_DEPRECATE -D_CRT_SECURE_NO_WARNINGS)
+
   IF(BUILD_DEBUG) 
     # Add debug mode for mex files
     SET(MATLAB_COMPILATION "-g")		
@@ -151,21 +182,21 @@ ELSE(WIN32)
 		# Case of debug mode
 		IF (BUILD_VERBOSE)
 			ADD_DEFINITIONS(-g -O3 -Wall -pipe -v ${COVERAGE_FLAGS})
-		ELSE(BUILD_VERBOSE)
+		ELSE()
 			ADD_DEFINITIONS(-g -O3 -quiet -pipe ${COVERAGE_FLAGS})
-		ENDIF(BUILD_VERBOSE)
+		ENDIF()
 		# Add debug mode for mex files
 		SET(MATLAB_COMPILATION "-g")		
-	ELSE(BUILD_DEBUG)
+	ELSE()
 		# Case of release mode
 		IF (BUILD_VERBOSE)
 			ADD_DEFINITIONS( -O3 -Wall -pipe -v -DNDEBUG ${COVERAGE_FLAGS})
-		ELSE(BUILD_VERBOSE)
+		ELSE()
 			ADD_DEFINITIONS( -O3 -quiet -pipe -DNDEBUG ${COVERAGE_FLAGS})
-		ENDIF(BUILD_VERBOSE)
+		ENDIF()
 		# Add debug mode for mex files
-		SET(MATLAB_COMPILATION "-v")		
-	ENDIF(BUILD_DEBUG)
+		SET(MATLAB_COMPILATION "-O")
+	ENDIF()
 ENDIF(WIN32)
 
 ##############################################################################
@@ -183,17 +214,6 @@ SET(MPTK_FFTW_WISDOM_FILE ${MPTK_BINARY_DIR}/mptk/default_fftw_wisdom_file)
 SET(MPTK_FFTW_WISDOM_FILE_INSTALL ${CMAKE_INSTALL_PREFIX}/mptk/default_fftw_wisdom_file)
 SET(MPTK_REFERENCE_PATH ${MPTK_BINARY_DIR}/mptk/reference)
 SET(MPTK_REFERENCE_PATH_INSTALL ${CMAKE_INSTALL_PREFIX}/mptk/reference)
-
-##############################################################################
-#Define temporary directory
-##############################################################################
-IF(UNIX)
-	SET(MPTK_TMP_PATH /tmp)
-ELSE(UNIX)
-	IF(WIN32)
-		SET(MPTK_TMP_PATH C:/Temp)
-	ENDIF(WIN32)
-ENDIF(UNIX)
 
 ##############################################################################
 # Setting DEFAULT REFERENCE FILES
@@ -295,32 +315,35 @@ SET(MPTK_DEFAULT_DICT_LIST_FILE_INSTALL ${MPTK_REFERENCE_PATH_INSTALL}/${MPTK_DE
 ##############################################################################
 # Case of Visual Studio 
 IF(WIN32)
+
+	MESSAGE( STATUS "MAIN CODE:	")
+
     IF (BUILD_DEBUG)
 		# Case of debug mode
-		SET(MPTK_DEBUG_RELEASE "debug")
-		SET(MPTK_LIB_DIR ${MPTK_BINARY_DIR}/lib/debug)
-    ELSE (BUILD_DEBUG)
+		SET(MPTK_DEBUG_RELEASE "Debug")
+    ELSE ()
     	# Case of release mode
-		SET(MPTK_DEBUG_RELEASE "release")
-		SET(MPTK_LIB_DIR ${MPTK_BINARY_DIR}/lib/release)
-    ENDIF (BUILD_DEBUG)
+		SET(MPTK_DEBUG_RELEASE "Release")
+    ENDIF ()
+	SET(MPTK_LIB_DIR ${MPTK_BINARY_DIR}/lib/${MPTK_DEBUG_RELEASE})
 	SET(MPTK_LIB_DIR_INSTALL ${CMAKE_INSTALL_PREFIX}/mptk/plugins)
-ELSE(WIN32)
+	MESSAGE( STATUS "MPTK_DEBUG_RELEASE:	" ${MPTK_DEBUG_RELEASE} )
+ELSE()
 	# Case of Xcode
 	IF( CMAKE_GENERATOR STREQUAL "Xcode")
     	# We would like to select a single build mode, would we ?
 	    # or to select it dynamically there is the CMAKE_CFG_INTDIR stuff
 	    IF (BUILD_DEBUG)
     		SET(MPTK_LIB_DIR ${MPTK_BINARY_DIR}/lib/Debug)
-	    ELSE (BUILD_DEBUG)
+	    ELSE ()
     		SET(MPTK_LIB_DIR ${MPTK_BINARY_DIR}/lib/Release)
-	    ENDIF (BUILD_DEBUG)
+	    ENDIF ()
 	ELSE( CMAKE_GENERATOR STREQUAL "Xcode")
 	    # Generic case
 	    SET(MPTK_LIB_DIR ${MPTK_BINARY_DIR}/lib)
 	ENDIF(CMAKE_GENERATOR STREQUAL "Xcode") 
     SET(MPTK_LIB_DIR_INSTALL ${CMAKE_INSTALL_PREFIX}/mptk/plugins)
-ENDIF(WIN32)
+ENDIF()
 
 #------------------
 # setting bin path
@@ -505,11 +528,11 @@ SET(CPACK_SYSTEM_NAME "${CMAKE_SYSTEM_PROCESSOR}")
 SET(CPACK_PACKAGE_INSTALL_DIRECTORY "MPTK")
 
 SET(CPACK_OUTPUT_CONFIG_FILE "${MPTK_BINARY_DIR}/CPackConfig.cmake")
-SET(CPACK_PACKAGE_DESCRIPTION_FILE "${MPTK_SOURCE_DIR}/README.txt")
+SET(CPACK_PACKAGE_DESCRIPTION_FILE "${MPTK_SOURCE_DIR}/README.md")
 SET(CPACK_PACKAGE_DESCRIPTION_SUMMARY "Matching Pursuit Tool Kit")
 SET(CPACK_RESOURCE_FILE_LICENSE "${MPTK_SOURCE_DIR}/COPYING.txt")
-SET(CPACK_RESOURCE_FILE_WELCOME "${MPTK_SOURCE_DIR}/README.txt")
-INSTALL(FILES "${MPTK_SOURCE_DIR}/README.txt" DESTINATION mptk)
+SET(CPACK_RESOURCE_FILE_WELCOME "${MPTK_SOURCE_DIR}/README.md")
+INSTALL(FILES "${MPTK_SOURCE_DIR}/README.md" DESTINATION mptk)
 INSTALL(FILES "${MPTK_SOURCE_DIR}/COPYING.txt" DESTINATION mptk)
 
 ##############################################################################

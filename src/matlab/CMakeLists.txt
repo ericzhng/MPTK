@@ -87,7 +87,8 @@ ENDFOREACH(matscriptfile)
 
 IF(BUILD_MATLAB_MEX_FILES_EXPERIMENTAL)
 # List of experimental script files to be copied and installed
-FOREACH(scriptfile createrandomdictionary.m create_synthetic_data.m savetable.m tableread.m test_anywave.m test_mpd_demix.m)
+# FOREACH(scriptfile createrandomdictionary.m create_synthetic_data.m test_anywave.m test_mpd_demix.m savetable.m tableread.m)
+FOREACH(scriptfile createrandomdictionary.m create_synthetic_data.m test_anywave.m test_mpd_demix.m)
    # Copy the script
    CONFIGURE_FILE(${MPTK_MATLAB_SRC_DIR}/scripts/experimental/${scriptfile} ${MPTK_MATLAB_OUTPUT_DIR}/${scriptfile} COPYONLY)
    # Set rule to install it
@@ -106,125 +107,128 @@ ENDIF(BUILD_MATLAB_MEX_FILES_EXPERIMENTAL)
 
 IF(BUILD_MATLAB_MEX_FILES AND MATLAB_MEX_COMPILER)   
 
-# mptk4matlab library:
-SET(MPTK4MATLAB_SOURCES
-classes/mptk4matlab.h
-classes/mptk4matlab.cpp
-classes/mexDict.cpp
-classes/mexSignal.cpp
-classes/mexAnywaveTable.cpp
-experimental/classes/mxBook.h
-experimental/classes/mxBook.cpp)
+	# mptk4matlab library:
+	SET(MPTK4MATLAB_SOURCES
+	classes/mptk4matlab.h
+	classes/mptk4matlab.cpp
+	classes/mexDict.cpp
+	classes/mexSignal.cpp
+	classes/mexAnywaveTable.cpp
+	experimental/classes/mxBook.h
+	experimental/classes/mxBook.cpp)
+	
+	ADD_LIBRARY(mptk4matlab SHARED ${MPTK4MATLAB_SOURCES})
+	
+	SET_TARGET_PROPERTIES(mptk4matlab PROPERTIES
+				  COMPILE_FLAGS " -DC_BUILDING_mptk4matlab ${CMAKE_CXX_FLAGS} -I${MATLAB_INCLUDE_DIR}"
+						  PREFIX ""
+						  OUTPUT_NAME "libmptk4matlab"
+						  )
+	
+	TARGET_LINK_LIBRARIES(mptk4matlab mptk ${MATLAB_MEX_LIBRARY} ${MATLAB_MX_LIBRARY} ${MATLAB_ENG_LIBRARY})
+	ADD_DEPENDENCIES(mptk4matlab mptk)
+	INSTALL(TARGETS
+	  mptk4matlab
+	 LIBRARY DESTINATION lib
+	 ARCHIVE DESTINATION lib
+	 RUNTIME DESTINATION lib
+	)
 
-ADD_LIBRARY(mptk4matlab SHARED ${MPTK4MATLAB_SOURCES})
+	# List of mex files to be compiled and installed
+	SET(MAT_EXECUTABLES getmptkinfo dictread dictwrite sigread sigwrite bookread bookwrite mprecons mpdecomp cmpdecomp)
+	SET(MAT_EXEC_TARGETS ${MAT_EXECUTABLES} PARENT_SCOPE)
+	FOREACH(target ${MAT_EXECUTABLES})
+		ADD_CUSTOM_TARGET(matlab_${target} 
+				ALL echo
+				DEPENDS
+					${MPTK_MATLAB_OUTPUT_DIR}/${target}.${MEX_EXTENSION}
+					${MPTK_MATLAB_SRC_DIR}/${target}.cpp
+					mptk4matlab
+				SOURCES
+					${MPTK_MATLAB_SRC_DIR}/${target}.cpp
+				)
+		
+		## ======> What is the use of this line ?
+		# SET_TARGET_PROPERTIES(matlab_${target} PROPERTIES GENERATED true)
 
-SET_TARGET_PROPERTIES(mptk4matlab PROPERTIES
-		      COMPILE_FLAGS " -DC_BUILDING_mptk4matlab ${CMAKE_CXX_FLAGS} -I${MATLAB_INCLUDE_DIR}"
-                      PREFIX ""
-                      OUTPUT_NAME "libmptk4matlab"
-                      )
-                    
-TARGET_LINK_LIBRARIES(mptk4matlab mptk ${MATLAB_MEX_LIBRARY} ${MATLAB_MX_LIBRARY} ${MATLAB_ENG_LIBRARY})
-ADD_DEPENDENCIES(mptk4matlab mptk)
-INSTALL(TARGETS
-  mptk4matlab
- LIBRARY DESTINATION lib
- ARCHIVE DESTINATION lib
- RUNTIME DESTINATION lib
-)
+		# Command to generate the MEX-binary
+		IF(UNIX)
+			IF(APPLE)
+				ADD_CUSTOM_COMMAND(
+				OUTPUT ${MPTK_MATLAB_OUTPUT_DIR}/${target}.${MEX_EXTENSION}
+				POST_BUILD
+				COMMAND   ${MATLAB_MEX_COMPILER} ${MATLAB_COMPILATION}
+				ARGS      -v -largeArrayDims -O -DHAVE_FFTW3 -I${MATLAB_INCLUDE_DIR} -I${MPTK_BINARY_DIR} -I${LIBTINYXML_INCLUDE_DIR} -I/usr/include/ -I${MPTK_SOURCE_DIR} -I${LIBDSP_INCLUDE_DIR} -I${MPTK_SOURCE_DIR}/src/libmptk/ -I${FFTW3_INCLUDE_DIR} -I${MPTK_BINARY_DIR}/src/libmptk/ -I${MPTK_MATLAB_SRC_DIR}/classes/ -I${MPTK_MATLAB_SRC_DIR}/experimental/classes/ -I${MPTK_SOURCE_DIR}/src/plugin/base/ -I${MPTK_SOURCE_DIR}/src/plugin/contrib/lam/ -outdir ${MPTK_MATLAB_OUTPUT_DIR} ${MPTK_MATLAB_SRC_DIR}/${target}.cpp -L${MPTK_LIB_DIR} -lmptk -lmptk4matlab
+	   # FOR SAFETY, SHOULD USE FLAG -headerpad_max_install_names
+				COMMAND   install_name_tool -change ARGS ${MPTK_LIB_DIR}/libmptk4matlab.dylib libmptk4matlab.dylib ${MPTK_MATLAB_OUTPUT_DIR}/${target}.${MEX_EXTENSION}
+				COMMAND   install_name_tool -change ARGS ${MPTK_LIB_DIR}/libmptk.dylib libmptk.dylib ${MPTK_MATLAB_OUTPUT_DIR}/${target}.${MEX_EXTENSION}
+				COMMENT   "MEX")
+			ELSE(APPLE)
+				ADD_CUSTOM_COMMAND(
+				OUTPUT ${MPTK_MATLAB_OUTPUT_DIR}/${target}.${MEX_EXTENSION}
+				POST_BUILD
+				COMMAND   ${MATLAB_MEX_COMPILER} ${MATLAB_COMPILATION}
+				ARGS      -O -DHAVE_FFTW3 -I${MATLAB_INCLUDE_DIR} -I${MPTK_BINARY_DIR} -I${LIBTINYXML_INCLUDE_DIR} -I/usr/include/ -I${MPTK_SOURCE_DIR} -I${LIBDSP_INCLUDE_DIR} -I${MPTK_SOURCE_DIR}/src/libmptk/ -I${FFTW3_INCLUDE_DIR} -I${MPTK_BINARY_DIR}/src/libmptk/ -I${MPTK_MATLAB_SRC_DIR}/classes/ -I${MPTK_MATLAB_SRC_DIR}/experimental/classes/ -I${MPTK_SOURCE_DIR}/src/plugin/base/ -I${MPTK_SOURCE_DIR}/src/plugin/contrib/lam/ -outdir ${MPTK_MATLAB_OUTPUT_DIR} ${MPTK_MATLAB_SRC_DIR}/${target}.cpp  -L${MPTK_LIB_DIR} -lmptk -lmptk4matlab
+	   # FOR SAFETY, SHOULD USE FLAG -headerpad_max_install_names
+				COMMENT   "MEX")
+			ENDIF(APPLE)
+		ELSE(UNIX)
+			  ADD_CUSTOM_COMMAND(
+			  OUTPUT ${MPTK_MATLAB_OUTPUT_DIR}/${target}.${MEX_EXTENSION}
+			  POST_BUILD
+			  COMMAND   ${MATLAB_MEX_COMPILER} ${MATLAB_COMPILATION}
+			  ARGS      -O -DHAVE_FFTW3 -I${MATLAB_INCLUDE_DIR} -I${MPTK_BINARY_DIR} -I${LIBTINYXML_INCLUDE_DIR} -I${MPTK_SOURCE_DIR} -I${LIBDSP_INCLUDE_DIR} -I${MPTK_SOURCE_DIR}/src/libmptk/ -I${FFTW3_INCLUDE_DIR} -I${PTHREAD_INCLUDE_DIR} -I${MPTK_BINARY_DIR}/src/libmptk/ -I${MPTK_MATLAB_SRC_DIR}/classes/ -I${MPTK_MATLAB_SRC_DIR}/experimental/classes/ -I${MPTK_SOURCE_DIR}/src/plugin/base/ -I${MPTK_SOURCE_DIR}/src/plugin/contrib/lam/ -L${MPTK_LIB_DIR} -L${MPTK_LIB_DIR} -outdir ${MPTK_MATLAB_OUTPUT_DIR} ${MPTK_MATLAB_SRC_DIR}/${target}.cpp -lmptk -lmptk4matlab
+			  COMMENT   "MEX")
+	   ENDIF(UNIX)
+	   
+		# Set rules to install the MEX-binary and MEX-wrapper
+		CONFIGURE_FILE(${MPTK_MATLAB_SRC_DIR}/${target}.m ${MPTK_MATLAB_OUTPUT_DIR}/${target}.m COPYONLY)    
+		INSTALL(FILES ${MPTK_MATLAB_OUTPUT_DIR}/${target}.${MEX_EXTENSION} ${MPTK_MATLAB_OUTPUT_DIR}/${target}.m DESTINATION ${MPTK_MATLAB_INSTALL_DIR})
 
-# List of mex files to be compiled and installed
-SET(MAT_EXECUTABLES getmptkinfo dictread dictwrite sigread sigwrite bookread bookwrite mprecons mpdecomp cmpdecomp)
-SET(MAT_EXEC_TARGETS ${MAT_EXECUTABLES} PARENT_SCOPE)
-FOREACH(target ${MAT_EXECUTABLES})
-   ADD_CUSTOM_TARGET(matlab_${target} 
-   	             ALL echo
-                     DEPENDS
-		     ${MPTK_MATLAB_OUTPUT_DIR}/${target}.${MEX_EXTENSION}
-		     ${MPTK_MATLAB_SRC_DIR}/${target}.cpp
-		     mptk4matlab)
- 
-   ## ======> What is the use of this line ?
-   SET_TARGET_PROPERTIES(matlab_${target} PROPERTIES GENERATED true)
+	ENDFOREACH(target)
 
-	# Command to generate the MEX-binary
-	IF(UNIX)
-		IF(APPLE)
-			ADD_CUSTOM_COMMAND(
-			OUTPUT ${MPTK_MATLAB_OUTPUT_DIR}/${target}.${MEX_EXTENSION}
-			POST_BUILD
-			COMMAND   ${MATLAB_MEX_COMPILER} ${MATLAB_COMPILATION}
-			ARGS      -v -largeArrayDims -O -DHAVE_FFTW3 -I${MATLAB_INCLUDE_DIR} -I${MPTK_BINARY_DIR} -I${LIBTINYXML_INCLUDE_DIR} -I/usr/include/ -I${MPTK_SOURCE_DIR} -I${LIBDSP_INCLUDE_DIR} -I${MPTK_SOURCE_DIR}/src/libmptk/ -I${FFTW3_INCLUDE_DIR} -I${MPTK_BINARY_DIR}/src/libmptk/ -I${MPTK_MATLAB_SRC_DIR}/classes/ -I${MPTK_MATLAB_SRC_DIR}/experimental/classes/ -I${MPTK_SOURCE_DIR}/src/plugin/base/ -I${MPTK_SOURCE_DIR}/src/plugin/contrib/lam/ -outdir ${MPTK_MATLAB_OUTPUT_DIR} ${MPTK_MATLAB_SRC_DIR}/${target}.cpp -L${MPTK_LIB_DIR} -lmptk -lmptk4matlab
-   # FOR SAFETY, SHOULD USE FLAG -headerpad_max_install_names
-			COMMAND   install_name_tool -change ARGS ${MPTK_LIB_DIR}/libmptk4matlab.dylib libmptk4matlab.dylib ${MPTK_MATLAB_OUTPUT_DIR}/${target}.${MEX_EXTENSION}
-			COMMAND   install_name_tool -change ARGS ${MPTK_LIB_DIR}/libmptk.dylib libmptk.dylib ${MPTK_MATLAB_OUTPUT_DIR}/${target}.${MEX_EXTENSION}
-			COMMENT   "MEX")
-		ELSE(APPLE)
-			ADD_CUSTOM_COMMAND(
-			OUTPUT ${MPTK_MATLAB_OUTPUT_DIR}/${target}.${MEX_EXTENSION}
-			POST_BUILD
-			COMMAND   ${MATLAB_MEX_COMPILER} ${MATLAB_COMPILATION}
-			ARGS      -O -DHAVE_FFTW3 -I${MATLAB_INCLUDE_DIR} -I${MPTK_BINARY_DIR} -I${LIBTINYXML_INCLUDE_DIR} -I/usr/include/ -I${MPTK_SOURCE_DIR} -I${LIBDSP_INCLUDE_DIR} -I${MPTK_SOURCE_DIR}/src/libmptk/ -I${FFTW3_INCLUDE_DIR} -I${MPTK_BINARY_DIR}/src/libmptk/ -I${MPTK_MATLAB_SRC_DIR}/classes/ -I${MPTK_MATLAB_SRC_DIR}/experimental/classes/ -I${MPTK_SOURCE_DIR}/src/plugin/base/ -I${MPTK_SOURCE_DIR}/src/plugin/contrib/lam/ -outdir ${MPTK_MATLAB_OUTPUT_DIR} ${MPTK_MATLAB_SRC_DIR}/${target}.cpp  -L${MPTK_LIB_DIR} -lmptk -lmptk4matlab
-   # FOR SAFETY, SHOULD USE FLAG -headerpad_max_install_names
-			COMMENT   "MEX")
-		ENDIF(APPLE)
-	ELSE(UNIX)
-          ADD_CUSTOM_COMMAND(
-          OUTPUT ${MPTK_MATLAB_OUTPUT_DIR}/${target}.${MEX_EXTENSION}
-          POST_BUILD
-          COMMAND   ${MATLAB_MEX_COMPILER} ${MATLAB_COMPILATION}
-          ARGS      -O -DHAVE_FFTW3 -I${MATLAB_INCLUDE_DIR} -I${MPTK_BINARY_DIR} -I${LIBTINYXML_INCLUDE_DIR} -I${MPTK_SOURCE_DIR} -I${LIBDSP_INCLUDE_DIR} -I${MPTK_SOURCE_DIR}/src/libmptk/ -I${FFTW3_INCLUDE_DIR} -I${PTHREAD_INCLUDE_DIR} -I${MPTK_BINARY_DIR}/src/libmptk/ -I${MPTK_MATLAB_SRC_DIR}/classes/ -I${MPTK_MATLAB_SRC_DIR}/experimental/classes/ -I${MPTK_SOURCE_DIR}/src/plugin/base/ -I${MPTK_SOURCE_DIR}/src/plugin/contrib/lam/ -L${MPTK_LIB_DIR} -L${MPTK_LIB_DIR} -outdir ${MPTK_MATLAB_OUTPUT_DIR} ${MPTK_MATLAB_SRC_DIR}/${target}.cpp -lmptk -lmptk4matlab
-          COMMENT   "MEX")
-   ENDIF(UNIX)
-   
-    # Set rules to install the MEX-binary and MEX-wrapper
-    CONFIGURE_FILE(${MPTK_MATLAB_SRC_DIR}/${target}.m ${MPTK_MATLAB_OUTPUT_DIR}/${target}.m COPYONLY)    
-    INSTALL(FILES ${MPTK_MATLAB_OUTPUT_DIR}/${target}.${MEX_EXTENSION} ${MPTK_MATLAB_OUTPUT_DIR}/${target}.m DESTINATION ${MPTK_MATLAB_INSTALL_DIR})
+	#Install mandatory dll for windows
+	IF( CMAKE_CXX_COMPILER STREQUAL "cl")
+	IF(BUILD_DEBUG)
+	  #=== Copy the dll in the bin folder===
+	  ADD_CUSTOM_COMMAND (
+		TARGET mptk4matlab
+		POST_BUILD
+		COMMAND ${CMAKE_COMMAND}
+		ARGS -E copy "${MPTK_BINARY_DIR}/lib/Debug/mptk.dll" "${MPTK_MATLAB_OUTPUT_DIR}/mptk.dll"
+		COMMENT "Copying ${MPTK_BINARY_DIR}/lib/Debug/mptk.dll to ${MPTK_MATLAB_OUTPUT_DIR}/mptk.dll"
+	  )
+	  ADD_CUSTOM_COMMAND (
+		TARGET mptk4matlab
+		POST_BUILD
+		COMMAND ${CMAKE_COMMAND}
+		ARGS -E copy "${MPTK_BINARY_DIR}/lib/Debug/libmptk4matlab.dll" "${MPTK_MATLAB_OUTPUT_DIR}/libmptk4matlab.dll"
+		COMMENT "Copying ${MPTK_BINARY_DIR}/lib/Debug/libmptk4matlab.dll to ${MPTK_MATLAB_OUTPUT_DIR}/libmptk4matlab.dll"
+	  )
 
-ENDFOREACH(target)
+	ELSE(BUILD_DEBUG) # Release
+	  #=== Copy the dll in the bin folder===
+	  ADD_CUSTOM_COMMAND (
+			TARGET mptk4matlab
+		POST_BUILD
+		COMMAND ${CMAKE_COMMAND}
+		ARGS -E copy "${MPTK_BINARY_DIR}/lib/Release/mptk.dll" "${MPTK_MATLAB_OUTPUT_DIR}/mptk.dll"
+		COMMENT "Copying ${MPTK_BINARY_DIR}/lib/Release/mptk.dll to ${MPTK_MATLAB_OUTPUT_DIR}/mptk.dll"
+	  )
+	  ADD_CUSTOM_COMMAND (
+		TARGET mptk4matlab
+		POST_BUILD
+		COMMAND ${CMAKE_COMMAND}
+		ARGS -E copy "${MPTK_BINARY_DIR}/lib/Release/libmptk4matlab.dll" "${MPTK_MATLAB_OUTPUT_DIR}/libmptk4matlab.dll"
+		COMMENT "Copying ${MPTK_BINARY_DIR}/lib/Release/libmptk4matlab.dll to ${MPTK_MATLAB_OUTPUT_DIR}/libmptk4matlab.dll"
+	  )
+	ENDIF(BUILD_DEBUG)
 
-#Install mandatory dll for windows
-IF( CMAKE_CXX_COMPILER STREQUAL "cl")
-IF(BUILD_DEBUG)
-  #=== Copy the dll in the bin folder===
-  ADD_CUSTOM_COMMAND (
-    TARGET mptk4matlab
-    POST_BUILD
-    COMMAND ${CMAKE_COMMAND}
-    ARGS -E copy "${MPTK_BINARY_DIR}/lib/Debug/mptk.dll" "${MPTK_MATLAB_OUTPUT_DIR}/mptk.dll"
-    COMMENT "Copying ${MPTK_BINARY_DIR}/lib/Debug/mptk.dll to ${MPTK_MATLAB_OUTPUT_DIR}/mptk.dll"
-  )
-  ADD_CUSTOM_COMMAND (
-    TARGET mptk4matlab
-    POST_BUILD
-    COMMAND ${CMAKE_COMMAND}
-    ARGS -E copy "${MPTK_BINARY_DIR}/lib/Debug/libmptk4matlab.dll" "${MPTK_MATLAB_OUTPUT_DIR}/libmptk4matlab.dll"
-    COMMENT "Copying ${MPTK_BINARY_DIR}/lib/Debug/libmptk4matlab.dll to ${MPTK_MATLAB_OUTPUT_DIR}/libmptk4matlab.dll"
-  )
+	# Removed ${MPTK_MATLAB_OUTPUT_DIR}/mptk.dll because installer can't find it ...
+	INSTALL(FILES  ${MPTK_MATLAB_OUTPUT_DIR}/libmptk4matlab.dll DESTINATION ${MPTK_MATLAB_INSTALL_DIR})
+	INSTALL(FILES  ${MPTK_MATLAB_OUTPUT_DIR}/mptk.dll DESTINATION ${MPTK_MATLAB_INSTALL_DIR})
 
-ELSE(BUILD_DEBUG) # Release
-  #=== Copy the dll in the bin folder===
-  ADD_CUSTOM_COMMAND (
-        TARGET mptk4matlab
-	POST_BUILD
-	COMMAND ${CMAKE_COMMAND}
-	ARGS -E copy "${MPTK_BINARY_DIR}/lib/Release/mptk.dll" "${MPTK_MATLAB_OUTPUT_DIR}/mptk.dll"
-  	COMMENT "Copying ${MPTK_BINARY_DIR}/lib/Release/mptk.dll to ${MPTK_MATLAB_OUTPUT_DIR}/mptk.dll"
-  )
-  ADD_CUSTOM_COMMAND (
-   	TARGET mptk4matlab
-   	POST_BUILD
-   	COMMAND ${CMAKE_COMMAND}
-   	ARGS -E copy "${MPTK_BINARY_DIR}/lib/Release/libmptk4matlab.dll" "${MPTK_MATLAB_OUTPUT_DIR}/libmptk4matlab.dll"
-   	COMMENT "Copying ${MPTK_BINARY_DIR}/lib/Release/libmptk4matlab.dll to ${MPTK_MATLAB_OUTPUT_DIR}/libmptk4matlab.dll"
-  )
-ENDIF(BUILD_DEBUG)
-
-# Removed ${MPTK_MATLAB_OUTPUT_DIR}/mptk.dll because installer can't find it ...
-INSTALL(FILES  ${MPTK_MATLAB_OUTPUT_DIR}/libmptk4matlab.dll DESTINATION ${MPTK_MATLAB_INSTALL_DIR})
-INSTALL(FILES  ${MPTK_MATLAB_OUTPUT_DIR}/mptk.dll DESTINATION ${MPTK_MATLAB_INSTALL_DIR})
-
-ENDIF( CMAKE_CXX_COMPILER STREQUAL "cl")
+	ENDIF( CMAKE_CXX_COMPILER STREQUAL "cl")
 
 ############################################
 #                  -5-
@@ -249,6 +253,7 @@ ELSE(BUILD_MATLAB_MEX_FILES AND MATLAB_MEX_COMPILER)
 	ENDFOREACH(scriptfile)
 
 ENDIF(BUILD_MATLAB_MEX_FILES AND MATLAB_MEX_COMPILER)   
+
 
 ############################################
 #                  -6-

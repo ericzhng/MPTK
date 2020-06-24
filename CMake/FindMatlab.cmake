@@ -29,21 +29,23 @@ SET(LIBMEX "mex")
 SET(LIBMX "mx")
 SET(LIBENG "eng")
 
+SET(MATLAB_ROOT "C:/Program Files/MATLAB/R2019a")
+
 IF(PIPOL_IMAGE)
 	IF(WIN32)
 		IF(PIPOL_IMAGE MATCHES "amd64")
-			SET(MATLAB_MEX_COMPILER "Y:/amd64/matlab-2010a-windows/bin/mex.bat")
-			SET(MATLAB_MEX_LIBRARY "Y:/amd64/matlab-2010a-windows/extern/lib/win64/microsoft/libmex.lib")
-			SET(MATLAB_MX_LIBRARY "Y:/amd64/matlab-2010a-windows/extern/lib/win64/microsoft/libmx.lib")
-			SET(MATLAB_ENG_LIBRARY "Y:/amd64/matlab-2010a-windows/extern/lib/win64/microsoft/libeng.lib")
-			SET(MATLAB_INCLUDE_DIR "Y:/amd64/matlab-2010a-windows/extern/include")
+			SET(MATLAB_MEX_COMPILER "${MATLAB_ROOT}/bin/mex.bat")
+			SET(MATLAB_MEX_LIBRARY "${MATLAB_ROOT}/extern/lib/win64/microsoft/libmex.lib")
+			SET(MATLAB_MX_LIBRARY "${MATLAB_ROOT}/extern/lib/win64/microsoft/libmx.lib")
+			SET(MATLAB_ENG_LIBRARY "${MATLAB_ROOT}/extern/lib/win64/microsoft/libeng.lib")
+			SET(MATLAB_INCLUDE_DIR "${MATLAB_ROOT}/extern/include")
 			SET(MEX_EXTENSION mexw64)
 		ELSE(PIPOL_IMAGE MATCHES "amd64")
-			SET(MATLAB_MEX_COMPILER "Y:/i386/matlab-2010a-windows/bin/mex.bat")
-			SET(MATLAB_MEX_LIBRARY "Y:/i386/matlab-2010a-windows/extern/lib/win32/microsoft/libmex.lib")
-			SET(MATLAB_MX_LIBRARY "Y:/i386/matlab-2010a-windows/extern/lib/win32/microsoft/libmx.lib")
-			SET(MATLAB_ENG_LIBRARY "Y:/i386/matlab-2010a-windows/extern/lib/win32/microsoft/libeng.lib")
-			SET(MATLAB_INCLUDE_DIR "Y:/i386/matlab-2010a-windows/extern/include")
+			SET(MATLAB_MEX_COMPILER "${MATLAB_ROOT}/bin/mex.bat")
+			SET(MATLAB_MEX_LIBRARY "${MATLAB_ROOT}/extern/lib/win32/microsoft/libmex.lib")
+			SET(MATLAB_MX_LIBRARY "${MATLAB_ROOT}/extern/lib/win32/microsoft/libmx.lib")
+			SET(MATLAB_ENG_LIBRARY "${MATLAB_ROOT}/extern/lib/win32/microsoft/libeng.lib")
+			SET(MATLAB_INCLUDE_DIR "${MATLAB_ROOT}/extern/include")
 			SET(MEX_EXTENSION mexw32)
 		ENDIF(PIPOL_IMAGE MATCHES "amd64")
 	ENDIF(WIN32)
@@ -151,7 +153,7 @@ ELSE(PIPOL_IMAGE)
 		IF(WIN32)
 			SET(EXECUTABLE_EXTENSION .bat)
 			SET(MATLAB_PATH 
-				"[HKEY_LOCAL_MACHINE\\SOFTWARE\\MathWorks\\MATLAB\\7.10;MATLABROOT]"
+				"[HKEY_LOCAL_MACHINE\\SOFTWARE\\MathWorks\\MATLAB\\9.0;MATLABROOT]"
 				"[HKEY_LOCAL_MACHINE\\SOFTWARE\\MathWorks\\MATLAB\\7.9;MATLABROOT]"
 				"[HKEY_LOCAL_MACHINE\\SOFTWARE\\MathWorks\\MATLAB\\7.8;MATLABROOT]"
 				"[HKEY_LOCAL_MACHINE\\SOFTWARE\\MathWorks\\MATLAB\\7.7;MATLABROOT]"
@@ -165,7 +167,7 @@ ELSE(PIPOL_IMAGE)
 			FIND_PATH(MATLAB_ROOT "license.txt" ${MATLAB_PATH} NO_DEFAULT_PATH)
 			IF (NOT MATLAB_ROOT)
 				SET(MATLAB_PATH
-					"[HKEY_LOCAL_MACHINE\\SOFTWARE\\MathWorks\\MATLAB\\7.0;MATLABROOT]"
+					"[HKEY_LOCAL_MACHINE\\SOFTWARE\\MathWorks\\MATLAB\\9.0;MATLABROOT]"
 					"[HKEY_LOCAL_MACHINE\\SOFTWARE\\MathWorks\\MATLAB\\6.5;MATLABROOT]"
 		    	)
 		    FIND_PATH(MATLAB_ROOT "license.txt" ${MATLAB_PATH} NO_DEFAULT_PATH)
@@ -174,6 +176,7 @@ ELSE(PIPOL_IMAGE)
 				ENDIF (MATLAB_ROOT)
 			ENDIF (NOT MATLAB_ROOT)
 		  
+			
 			SET(MATLAB_LIBRARIES_PATHS
 				"${MATLAB_ROOT}/extern/lib/win64/microsoft"
 				"${MATLAB_ROOT}/extern/lib/win32/microsoft"

@@ -165,13 +165,13 @@ bool MP_Dll_Manager_c::get_symbol( void **v, const char *sym_name )
 bool MP_Dll_Manager_c::search_library(vector<string> * lib_names, const char * path)
 {
   struct _finddata_t c_file;
-  long hFile;
+  intptr_t  hFile;
   static string fname;
   string buffer;
   buffer = path;
   buffer  += "\\";
   buffer += MP_Dll_Manager_c::get_dll_type();
-  if ( (hFile = (long)_findfirst(buffer.c_str(), &c_file)) == -1L )
+  if ((hFile = (intptr_t)_findfirst(buffer.c_str(), &c_file)) == -1L)
     {
       mp_error_msg( "MP_Dll_Manager::search_library","No *.dll files in current directory: [%s]\n", buffer.c_str() );
       return false;

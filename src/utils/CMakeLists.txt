@@ -59,24 +59,26 @@ ENDIF(BUILD_EXPERIMENTAL)
 
 #For win32 and platforms and MINGW build command, copy the dll files in the build dir
 IF(WIN32)
+	MESSAGE( STATUS "MPTK_DEBUG_RELEASE:	" ${MPTK_DEBUG_RELEASE} )
+
       #=== Copy the dll in the bin folder===
       ADD_CUSTOM_COMMAND (
                             TARGET mpd
                             POST_BUILD
                             COMMAND ${CMAKE_COMMAND}
-                            ARGS -E copy "${PTHREAD_LIBRARY_FILE}/../pthreadVC2.dll" 
+                            ARGS -E copy "${PTHREAD_INCLUDE_DIR}/../lib/pthreadVC2.dll" 
                             "${MPTK_BINARY_DIR}/bin/${MPTK_DEBUG_RELEASE}/pthreadVC2.dll")
       ADD_CUSTOM_COMMAND (
                             TARGET mpd
                             POST_BUILD
                             COMMAND ${CMAKE_COMMAND}
-                            ARGS -E copy "${FFTW3_LIBRARY_FILE}/../libfftw3-3.dll" 
+                            ARGS -E copy "${FFTW3_INCLUDE_DIR}/../lib/libfftw3-3.dll" 
                             "${MPTK_BINARY_DIR}/bin/${MPTK_DEBUG_RELEASE}/libfftw3-3.dll") 
       ADD_CUSTOM_COMMAND (
                             TARGET mpd
                             POST_BUILD
                             COMMAND ${CMAKE_COMMAND}
-                            ARGS -E copy "${SNDFILE_LIBRARY_FILE}/../libsndfile-1.dll" 
+                            ARGS -E copy "${SNDFILE_INCLUDE_DIR}/../lib/libsndfile-1.dll" 
                             "${MPTK_BINARY_DIR}/bin/${MPTK_DEBUG_RELEASE}/libsndfile-1.dll")              
       ADD_CUSTOM_COMMAND (
                             TARGET mpd
@@ -91,9 +93,11 @@ ENDIF(WIN32)
 #------------------------------------------------
 #Install dll in the destination folder for Win32 plateform
 IF(WIN32)
+	INSTALL(FILES "${MPTK_BINARY_DIR}/bin/${MPTK_DEBUG_RELEASE}/mptk.dll" DESTINATION bin)
 	INSTALL(FILES "${MPTK_BINARY_DIR}/bin/${MPTK_DEBUG_RELEASE}/pthreadVC2.dll" DESTINATION bin)
 	INSTALL(FILES "${MPTK_BINARY_DIR}/bin/${MPTK_DEBUG_RELEASE}/libfftw3-3.dll" DESTINATION bin)
 	INSTALL(FILES "${MPTK_BINARY_DIR}/bin/${MPTK_DEBUG_RELEASE}/libsndfile-1.dll" DESTINATION bin)
+	INSTALL(FILES "${MPTK_BINARY_DIR}/bin/${MPTK_DEBUG_RELEASE}/mptk.dll" DESTINATION mptk/matlab)
 	INSTALL(FILES "${MPTK_BINARY_DIR}/bin/${MPTK_DEBUG_RELEASE}/pthreadVC2.dll" DESTINATION mptk/matlab)
 	INSTALL(FILES "${MPTK_BINARY_DIR}/bin/${MPTK_DEBUG_RELEASE}/libfftw3-3.dll" DESTINATION mptk/matlab)
 	INSTALL(FILES "${MPTK_BINARY_DIR}/bin/${MPTK_DEBUG_RELEASE}/libsndfile-1.dll" DESTINATION mptk/matlab)
